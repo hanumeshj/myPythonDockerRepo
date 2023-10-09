@@ -46,5 +46,30 @@ jobs:
     - name: Push Docker image to ECR
       run: |
         docker push 422723218561.dkr.ecr.ap-south-1.amazonaws.com/githubaction:${{ github.sha }}
+
+  deploy_to_docker:
+    name: SSH into EC2 and Run Docker Commands
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up SSH key
+      run: echo "$SSH_PRIVATE_KEY" > ssh_key.pem && chmod 600 ssh_key.pem
+
+    - name: SSH into EC2
+      run: |
+        ssh -i ssh_key.pem ubuntu@172.31.12.187 << 'ENDSSH'
+        # Inside the SSH session on the EC2 instance
+        # Run your Docker commands here
+        docker pull 422723218561.dkr.ecr.ap-south-1.amazonaws.com/githubaction:ffc347d90795f44059b65b845a73173857022c75
+        docker run -d 422723218561.dkr.ecr.ap-south-1.amazonaws.com/githubaction:ffc347d90795f44059b65b845a73173857022c75
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Cleanup SSH key
+      run: rm ssh_key.pem
+        
         
     
