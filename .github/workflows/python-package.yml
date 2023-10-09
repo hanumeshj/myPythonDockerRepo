@@ -61,7 +61,8 @@ jobs:
 
     - name: SSH into EC2
       run: |
-        ssh -i ssh_key.pem ubuntu@13.232.120.253 << 'ENDSSH'
+        #ssh -i ssh_key.pem ubuntu@13.232.120.253 << 'ENDSSH'
+        ssh -i ssh_key.pem ubuntu@13.232.120.253
         # Inside the SSH session on the EC2 instance
         # Run your Docker commands here
         
